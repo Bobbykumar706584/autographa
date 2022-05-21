@@ -33,7 +33,6 @@ export default function EditorSection({
   hideAddition,
   CustomNavigation,
 }) {
-  const [content, setContent] = useState(true);
   const [openResourcePopUp, setOpenResourcePopUp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
@@ -226,14 +225,11 @@ export default function EditorSection({
           </div>
         </div>
 
-        {
-          content
-          && (
-            <div
-              style={{ fontFamily: 'sans-serif', fontSize: `${fontSize}rem` }}
-              className="prose-sm p-4 text-xl h-full overflow-y-scroll no-scrollbars"
-            >
-              {
+        <div
+          style={{ fontFamily: 'sans-serif', fontSize: `${fontSize}rem` }}
+          className="pb-16 prose-sm max-w-none overflow-auto h-full scrollbars-width"
+        >
+          {
                 (loadResource === false)
                   ? (
                     <div className="w-full h-full flex items-center justify-center">
@@ -251,22 +247,20 @@ export default function EditorSection({
                   )
                   : children
               }
-              {hideAddition && (
-                <button
-                  type="button"
-                  title="add section"
-                  onClick={addRow}
-                  className="absolute p-2 bg-primary rounded bottom-0 -right-0 invisible group-hover:visible"
-                >
-                  <ViewGridAddIcon
-                    className="h-6 w-6 text-white"
-                    aria-hidden="true"
-                  />
-                </button>
+          {hideAddition && (
+          <button
+            type="button"
+            title="add section"
+            onClick={addRow}
+            className="absolute p-2 bg-primary rounded bottom-0 -right-0 invisible group-hover:visible"
+          >
+            <ViewGridAddIcon
+              className="h-6 w-6 text-white"
+              aria-hidden="true"
+            />
+          </button>
               )}
-            </div>
-          )
-        }
+        </div>
 
       </div>
       <ConfirmationModal
