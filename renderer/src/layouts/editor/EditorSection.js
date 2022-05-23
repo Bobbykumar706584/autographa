@@ -225,7 +225,7 @@ export default function EditorSection({
           && (
             <div
               style={{ fontFamily: 'sans-serif', fontSize: `${fontSize}rem` }}
-              className="prose-sm p-4 text-xl h-full overflow-auto scrollbars-width"
+              className="pb-16 prose-sm max-w-none overflow-auto h-full scrollbars-width"
             >
               {
                 (loadResource === false)

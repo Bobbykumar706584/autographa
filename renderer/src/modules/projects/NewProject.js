@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 import ProjectsLayout from '@/layouts/projects/Layout';
 import AdvancedSettingsDropdown from '@/components/ProjectsPage/CreateProject/AdvancedSettingsDropdown';
 import { ProjectContext } from '@/components/context/ProjectContext';
@@ -89,7 +88,6 @@ export default function NewProject({ call, project, closeEdit }) {
     },
   } = React.useContext(ProjectContext);
   const { action: { validateField, isLengthValidated, isTextValidated } } = useValidator();
-  const router = useRouter();
   const [snackBar, setOpenSnackBar] = React.useState(false);
   const [snackText, setSnackText] = React.useState('');
   const [notify, setNotify] = React.useState();
@@ -138,7 +136,7 @@ export default function NewProject({ call, project, closeEdit }) {
       setSnackText(status[0].value);
       setOpenSnackBar(true);
       if (status[0].type === 'success') {
-        router.push('/projects');
+        closeEdit();
       }
     });
   };
@@ -325,36 +323,25 @@ export default function NewProject({ call, project, closeEdit }) {
                 <AdvancedSettingsDropdown call={call} project={project} />
                 {call === 'new'
                   ? (
-                    <div>
-                      <button
-                        type="button"
-                        aria-label="create"
-                        className="w-40 h-10 my-5 bg-success leading-loose rounded shadow text-xs font-base text-white tracking-wide font-light uppercase"
-                        onClick={() => validate()}
-                      >
-                        Create Project
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      aria-label="create"
+                      className="w-40 h-10 my-5 bg-success leading-loose rounded shadow text-xs font-base text-white tracking-wide font-light uppercase"
+                      onClick={() => validate()}
+                    >
+                      Create Project
+                    </button>
                   )
                   : (
-                    <div className="p-3 flex gap-5 justify-end">
-                      <button
-                        type="button"
-                        aria-label="cancel-edit-project"
-                        className="w-40 h-10  bg-error leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
-                        onClick={() => closeEdit()}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        aria-label="save-edit-project"
-                        className="w-40 h-10  bg-success leading-loose rounded shadow text-xs font-base  text-white tracking-wide  font-light uppercase"
-                        onClick={() => validate()}
-                      >
-                        Save
-                      </button>
-                    </div>
+
+                    <button
+                      type="button"
+                      aria-label="save-edit-project"
+                      className="w-40 h-10 my-5 bg-success leading-loose rounded shadow text-xs font-base text-white tracking-wide font-light uppercase"
+                      onClick={() => validate()}
+                    >
+                      Update project
+                    </button>
                   )}
               </div>
             </div>
