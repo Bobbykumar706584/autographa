@@ -6,6 +6,8 @@ export const En = {
     'label-target-language': 'Target Language',
     'label-ltr': 'LTR',
     'label-rtl': 'RTL',
+    'language-code':'Language Code',
+    'language-name':'Language Name',
     'label-books': 'Books',
     'label-book': 'Book',
     'label-import-book': 'Import Book',

@@ -6,6 +6,8 @@ export const Ru = {
     'label-target-language': 'Язык перевода',
     'label-ltr': 'слева направо',
     'label-rtl': 'справа налево',
+    'language-code':'код языка',
+    'language-name':'Название языка',
     'label-books': 'Книги',
     'label-book': 'Книга',
     'label-import-book': 'Импорт книги',

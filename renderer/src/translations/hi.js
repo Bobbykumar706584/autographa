@@ -6,6 +6,8 @@ export const Hi = {
     'label-target-language': 'लक्ष्य भाषा',
     'label-ltr': 'LTR',
     'label-rtl': 'RTL',
+    'language-code':'भाषा कोड',
+    'language-name':'भाषा का नाम',
     'label-books': 'पुस्तकें',
     'label-book': 'पुस्तक',
     'label-import-book': 'पुस्तक आयात करें',

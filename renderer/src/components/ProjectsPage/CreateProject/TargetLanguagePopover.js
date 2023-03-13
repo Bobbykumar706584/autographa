@@ -11,11 +11,13 @@ export default function TargetLanguagePopover({ projectType }) {
   const [id, setId] = React.useState();
   const [lang, setLang] = React.useState();
   const [direction, setDirection] = React.useState();
+  const [langCode, setLangCode] = React.useState();
   const [edit, setEdit] = React.useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [snackBar, setOpenSnackBar] = React.useState(false);
   const [snackText, setSnackText] = React.useState('');
   const [notify, setNotify] = React.useState();
+  const [maxLength, setMaxLength] = React.useState();
   const [lock, setLock] = useState();
   const {
     states: {
@@ -41,12 +43,14 @@ export default function TargetLanguagePopover({ projectType }) {
 
       setLang(language.title);
       setDirection(language.scriptDirection ? language.scriptDirection : t('label-rtl'));
+      setLangCode(language.langCode)
     } else {
       logger.debug('TargetLanguagePopover.js', 'Selected the Pre-defined language which can\'t be edited');
       setLock();
       setEdit(false);
       setLang();
       setDirection(t('label-ltr'));
+      setLangCode();
     }
   };
   function openModal() {
@@ -59,7 +63,7 @@ export default function TargetLanguagePopover({ projectType }) {
     logger.debug('TargetLanguagePopover.js', 'Adding a new language');
     const result = languages.filter((l) => l.title.toLowerCase() === lang.toLowerCase() && l.scriptDirection.toLowerCase() === direction.toLowerCase());
     if (result.length === 0) {
-      setLanguage({ id: languages.length + 1, title: lang, scriptDirection: direction });
+      setLanguage({ id: languages.length + 1, title: lang, scriptDirection: direction, langCode:langCode });
       closeModal();
     } else {
       setNotify('warning');
@@ -69,10 +73,9 @@ export default function TargetLanguagePopover({ projectType }) {
   };
   const editLanguage = () => {
     logger.debug('TargetLanguagePopover.js', 'Editing the language');
-    setLanguage({ id, title: lang, scriptDirection: direction });
+    setLanguage({ id, title: lang, scriptDirection: direction, langCode: langCode });
     closeModal();
   };
-
   return (
     <>
       <div className="flex gap-3">
@@ -131,11 +134,12 @@ export default function TargetLanguagePopover({ projectType }) {
           >
 
             <div className="fixed inset-0 flex items-center justify-center">
-              <div className="  h-80 rounded shadow border border-gray-200 bg-white">
-                <div className="grid grid-rows-2 gap-5 m-8">
+              <div className="h-80 rounded shadow border border-gray-200 bg-white">
+                <div className="grid grid-rows-1 gap-5 m-6">
                   <div>
-                    <h2 className="uppercase font-bold leading-5 tracking-widest mb-5 ">{edit === true ? t('label-edit-langauge') : t('label-new-langauge')}</h2>
+                    <h2 className="uppercase font-bold leading-5 tracking-widest mb-2 ">{edit === true ? t('label-edit-langauge') : t('label-new-langauge')}</h2>
                     <div>
+                    <h3 className="mb-1 text-xs font-base  text-primary tracking-wide leading-4 font-light">{t('language-name')}</h3>
                       <input
                         type="text"
                         name="search_box"
@@ -147,13 +151,28 @@ export default function TargetLanguagePopover({ projectType }) {
                         className="bg-gray-200 w-80 block rounded shadow-sm sm:text-sm focus:border-primary border-gray-300"
                       />
                     </div>
+                    <div className='mt-1'> 
+                    <h3 className="mb-1 text-xs font-base  text-primary tracking-wide leading-4 font-light">{t('language-code')}</h3>
+                        <input
+                          type="text"
+                          name="search_box"
+                          id="lang_box"
+                          autoComplete="given-code"
+                          value={langCode}
+                          maxLength={maxLength}
+                          onChange={(e) => { setLangCode(e.target.value); 
+                          setMaxLength(2)}}
+                          disabled={lock}
+                          className="bg-gray-200 w-16 block rounded shadow-sm sm:text-sm focus:border-primary border-gray-300"
+                        />
+                    </div>
                   </div>
                   {projectType !== 'Audio'
                   && (
                     <div>
-                      <h3 className="mb-3 text-xs font-base  text-primary tracking-wide leading-4 font-light">{t('label-script-direction')}</h3>
-                      <div>
-                        <div className=" mb-3">
+                      <h3 className="mb-1 text-xs font-base  text-primary tracking-wide leading-4 font-light">{t('label-script-direction')}</h3>
+                      <div className='flex items-center justify-start'>
+                        <div className="">
                           <input
                             type="radio"
                             className="form-radio h-4 w-4 text-primary"
@@ -162,23 +181,23 @@ export default function TargetLanguagePopover({ projectType }) {
                             onChange={() => setDirection(t('label-ltr'))}
                             disabled={lock}
                           />
-                          <span className=" ml-4 text-xs font-bold">{t('label-ltr')}</span>
+                          <span className="ml-2 text-xs font-bold">{t('label-ltr')}</span>
                         </div>
                         <div>
                           <input
                             type="radio"
-                            className="form-radio h-4 w-4 text-primary"
+                            className="form-radio h-4 w-4 text-primary ml-10"
                             value={t('label-rtl')}
                             checked={direction === t('label-rtl')}
                             onChange={() => setDirection(t('label-rtl'))}
                             disabled={lock}
                           />
-                          <span className=" ml-3 text-xs font-bold">{t('label-rtl')}</span>
+                          <span className="ml-2 text-xs font-bold">{t('label-rtl')}</span>
                         </div>
                       </div>
                     </div>
                   )}
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-between mt-4">
                     <button
                       type="button"
                       aria-label="create-language"

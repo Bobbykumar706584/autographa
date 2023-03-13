@@ -138,6 +138,8 @@
 	"label-script-direction": "Script Direction",
 	"label-ltr": "LTR",
 	"label-rtl": "RTL",
+	"language-code": "Language Code",
+	"language-name": "Language Name",
 	"label-current": "Current Book",
 	"label-all": "All Books",
 	"label-empty-chapters": "Empty Chapters",

@@ -115,6 +115,8 @@
 	"label-script-direction": "स्क्रिप्ट दिशा",
 	"label-ltr": "बाएं से दाएं",
 	"label-rtl": "दाएं से बाएं",
+	"language-code": "भाषा कोड",
+	"language-name": "भाषा का नाम",
 	"label-current": "वर्तमान पुस्तक",
 	"label-all": "सभी पुस्तकें",
 	"label-empty-chapters": "खाली अध्याय",

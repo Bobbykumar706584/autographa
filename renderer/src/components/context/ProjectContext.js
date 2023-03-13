@@ -6,10 +6,10 @@ import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import saveProjectsMeta from '../../core/projects/saveProjetcsMeta';
 import { environment } from '../../../environment';
-
+import { customSingleBox } from '../hooks/customSingleBox';
 const path = require('path');
 const advanceSettings = require('../../lib/AdvanceSettings.json');
-
+import langNames from '../../lib/lang/langNames.json'
 export const ProjectContext = React.createContext();
 
 const ProjectContextProvider = ({ children }) => {
@@ -17,7 +17,7 @@ const ProjectContextProvider = ({ children }) => {
     const [drawer, setDrawer] = React.useState(false);
     const [scrollLock, setScrollLock] = React.useState(false);
     const [sideTabTitle, setSideTabTitle] = React.useState('New');
-    const [languages, setLanguages] = React.useState(advanceSettings.languages);
+    const [languages, setLanguages] = React.useState([]);
     const [language, setLanguage] = React.useState(advanceSettings.languages[0]);
     const [licenceList, setLicenseList] = React.useState(advanceSettings.copyright);
     const [copyright, setCopyRight] = React.useState(advanceSettings.copyright[0]);

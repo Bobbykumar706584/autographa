@@ -21,6 +21,9 @@ import * as logger from '../../logger';
 import ImportPopUp from './ImportPopUp';
 import CustomList from './CustomList';
 import burrito from '../../lib/BurritoTemplete.json';
+import langNames from '../../lib/lang/langNames.json'
+import CustomSingleBox from '@/components/hooks/customSingleBox';
+import CustomSearchBox from '@/components/Resources/ResourceUtils/CustomSearchBox';
 // eslint-disable-next-line no-unused-vars
 const solutions = [
   {
@@ -117,6 +120,7 @@ export default function NewProject({ call, project, closeEdit }) {
   });
 
   const [headerDropDown, setHeaderDropDown] = React.useState(solutions[0].name);
+  const [selectLang, setSelectLang] = React.useState([])
   const handleDropDown = (currentSelection) => {
     setHeaderDropDown(currentSelection);
   };
@@ -353,6 +357,12 @@ export default function NewProject({ call, project, closeEdit }) {
                       // options={languages}
                       options={languages.filter((v, i, a) => a.findIndex((v2) => ['title', 'scriptDirection'].every((k) => v2[k] === v[k])) === i)}
                       show
+                    />
+                    <CustomSearchBox 
+                    customData={langNames}
+                    selectedList={selectLang}
+                    setSelectedList={setSelectLang}
+                    filterParams='ang'
                     />
                   </div>
                   <div className="mt-5">
