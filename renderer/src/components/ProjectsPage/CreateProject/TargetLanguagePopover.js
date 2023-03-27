@@ -32,18 +32,19 @@ export default function TargetLanguagePopover({ projectType }) {
   const openLanguageNav = (nav) => {
     logger.debug('TargetLanguagePopover.js', 'In openLanguageNav');
     if (nav === 'edit') {
+      console.log(language, 'language')
       logger.debug('TargetLanguagePopover.js', 'Selected a language which can be edited');
-      setLock(language.locked);
+      setLock(language?.custom);
       setEdit(true);
       languages.forEach((item) => {
-        if (item.id !== undefined) {
-         setId(item.id);
+        if (item.pk === language.pk) {
+         setId(item.pk);
         }
       });
 
-      setLang(language.title);
-      setDirection(language.scriptDirection ? language.scriptDirection : t('label-rtl'));
-      setLangCode(language.langCode)
+      setLang(language.ang);
+      setDirection(language.ld ? language.ld : t('label-rtl'));
+      setLangCode(language.lc)
     } else {
       logger.debug('TargetLanguagePopover.js', 'Selected the Pre-defined language which can\'t be edited');
       setLock();
@@ -61,9 +62,9 @@ export default function TargetLanguagePopover({ projectType }) {
   }
   const addLanguage = () => {
     logger.debug('TargetLanguagePopover.js', 'Adding a new language');
-    const result = languages.filter((l) => l.title.toLowerCase() === lang.toLowerCase() && l.scriptDirection.toLowerCase() === direction.toLowerCase());
+    const result = languages.filter((l) => l?.title?.toLowerCase() === lang.toLowerCase() && l?.scriptDirection?.toLowerCase() === direction.toLowerCase() && l['langCode']?.toLowerCase() === langCode.toLowerCase());
     if (result.length === 0) {
-      setLanguage({ id: languages.length + 1, title: lang, scriptDirection: direction, langCode:langCode });
+      setLanguage({ id: languages.length + 1, title: lang, scriptDirection: direction, langCode:langCode, custom:true });
       closeModal();
     } else {
       setNotify('warning');
@@ -73,7 +74,7 @@ export default function TargetLanguagePopover({ projectType }) {
   };
   const editLanguage = () => {
     logger.debug('TargetLanguagePopover.js', 'Editing the language');
-    setLanguage({ id, title: lang, scriptDirection: direction, langCode: langCode });
+    setLanguage({ id, title: lang, scriptDirection: direction, langCode: langCode, custom:true });
     closeModal();
   };
   return (
@@ -147,7 +148,7 @@ export default function TargetLanguagePopover({ projectType }) {
                         autoComplete="given-name"
                         value={lang}
                         onChange={(e) => { setLang(e.target.value); }}
-                        disabled={lock}
+                        disabled={!lock}
                         className="bg-gray-200 w-80 block rounded shadow-sm sm:text-sm focus:border-primary border-gray-300"
                       />
                     </div>
@@ -162,7 +163,7 @@ export default function TargetLanguagePopover({ projectType }) {
                           maxLength={maxLength}
                           onChange={(e) => { setLangCode(e.target.value); 
                           setMaxLength(2)}}
-                          disabled={lock}
+                          disabled={!lock}
                           className="bg-gray-200 w-16 block rounded shadow-sm sm:text-sm focus:border-primary border-gray-300"
                         />
                     </div>
@@ -179,7 +180,7 @@ export default function TargetLanguagePopover({ projectType }) {
                             value={t('label-ltr')}
                             checked={direction === t('label-ltr')}
                             onChange={() => setDirection(t('label-ltr'))}
-                            disabled={lock}
+                            disabled={!lock}
                           />
                           <span className="ml-2 text-xs font-bold">{t('label-ltr')}</span>
                         </div>
@@ -190,7 +191,7 @@ export default function TargetLanguagePopover({ projectType }) {
                             value={t('label-rtl')}
                             checked={direction === t('label-rtl')}
                             onChange={() => setDirection(t('label-rtl'))}
-                            disabled={lock}
+                            disabled={!lock}
                           />
                           <span className="ml-2 text-xs font-bold">{t('label-rtl')}</span>
                         </div>
@@ -207,7 +208,7 @@ export default function TargetLanguagePopover({ projectType }) {
                     >
                       {t('btn-cancel')}
                     </button>
-                    {lock ? <div />
+                    {!lock ? <div />
                     : (
                       <button
                         type="button"
