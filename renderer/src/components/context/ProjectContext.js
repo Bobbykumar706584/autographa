@@ -6,6 +6,7 @@ import { isElectron } from '../../core/handleElectron';
 import * as logger from '../../logger';
 import saveProjectsMeta from '../../core/projects/saveProjetcsMeta';
 import { environment } from '../../../environment';
+import langNames from '../../lib/lang/langNames.json';
 
 const path = require('path');
 const advanceSettings = require('../../lib/AdvanceSettings.json');
@@ -17,8 +18,8 @@ const ProjectContextProvider = ({ children }) => {
     const [drawer, setDrawer] = React.useState(false);
     const [scrollLock, setScrollLock] = React.useState(false);
     const [sideTabTitle, setSideTabTitle] = React.useState('New');
-    const [languages, setLanguages] = React.useState(advanceSettings.languages);
-    const [language, setLanguage] = React.useState(advanceSettings.languages[0]);
+    const [languages, setLanguages] = React.useState([]);
+    const [language, setLanguage] = React.useState();
     const [licenceList, setLicenseList] = React.useState(advanceSettings.copyright);
     const [copyright, setCopyRight] = React.useState(advanceSettings.copyright[0]);
     const [canonList, setCanonList] = React.useState(advanceSettings.canonSpecification);
@@ -44,6 +45,18 @@ const ProjectContextProvider = ({ children }) => {
       setNewProjectFields({ ...newProjectFields, [prop]: event.target.value });
     };
 
+    const languageData = async (languages) => {
+      if (!language?.ang) {
+        await languages?.filter((item) => {
+          if (item.lc === 'en') {
+            setLanguage(item);
+          }
+          if (item.ang !== '') { return item; }
+        });
+      }
+
+      // setLanguages(langs);
+    };
     const uniqueId = (list, id) => list.some((obj) => obj.id === id);
 
     const createSettingJson = (fs, file) => {
@@ -52,7 +65,7 @@ const ProjectContextProvider = ({ children }) => {
       setLicenseList((advanceSettings.copyright).push({
         id: 'Other', title: 'Custom', licence: '', locked: false,
       }));
-      setLanguages(advanceSettings.languages);
+      setLanguages(langNames);
       const json = {
         version: environment.AG_USER_SETTING_VERSION,
         history: {
@@ -126,10 +139,32 @@ const ProjectContextProvider = ({ children }) => {
               ? (advanceSettings.canonSpecification)
               .concat(json.history?.textTranslation.canonSpecification)
               : advanceSettings.canonSpecification);
-            setLanguages(json.history?.languages
-              ? (advanceSettings.languages)
-              .concat(json.history?.languages)
-              : advanceSettings.languages);
+              const userlanguages = [];
+            json.history?.languages?.forEach((userLang) => {
+              const obj = {};
+              obj.id = `id-${userLang.id}`;
+              obj.ang = userLang.title;
+              obj.ld = userLang.scriptDirection;
+              obj.custom = userLang?.custom || true;
+              obj.lc = userLang?.langCode || '';
+              userlanguages.push(obj);
+            });
+            const langFilter = userlanguages.length > 0
+            ? (langNames)
+            .concat(userlanguages)
+            : langNames;
+            if (!language?.ang) {
+              languageData(langFilter);
+            }
+            setLanguages([...langFilter]);
+            // setLanguages(userlanguages.length > 0
+            //   ? (langNames)
+            //   .concat(userlanguages)
+            //   : langNames);
+            // setLanguages(json.history?.languages
+            //   ? (advanceSettings.languages)
+            //   .concat(json.history?.languages)
+            //   : advanceSettings.languages);
           } else {
             createSettingJson(fs, file);
           }
@@ -163,7 +198,8 @@ const ProjectContextProvider = ({ children }) => {
               (json.history?.textTranslation[currentSettings])?.push(currentSetting);
             } else if (json.history[currentSettings]
                 && uniqueId(json.history[currentSettings], currentSetting.id)) {
-                (json.history[currentSettings]).forEach((setting) => {
+                  console.log(json.history[currentSettings], 'h');
+                  (json.history[currentSettings]).forEach((setting) => {
                   if (setting.id === currentSetting.id) {
                     const keys = Object.keys(setting);
                     keys.forEach((key) => {
@@ -190,18 +226,15 @@ const ProjectContextProvider = ({ children }) => {
     const createProjectCommonUtils = async () => {
       logger.debug('ProjectContext.js', 'In createProject common utils');
       // Add / update language into current list.
-      if (uniqueId(languages, language.id)) {
         languages.forEach((lang) => {
-          if (lang.id === language.id) {
-            if (lang.title !== language.title
-              || lang.scriptDirection !== language.scriptDirection) {
+          if (language.custom === true) {
+            if (lang.ang !== language.ang
+              || lang.ld !== language.ld || lang.lc !== language.lc) {
               updateJson('languages');
             }
           }
         });
-      } else {
-        updateJson('languages');
-      }
+
       // Update Custom licence into current list.
       if (copyright.title === 'Custom') {
         updateJson('copyright');
@@ -255,6 +288,7 @@ const ProjectContextProvider = ({ children }) => {
         language: '',
         projectName: '',
         scriptDirection: 'LTR',
+        langCode: '',
       };
         setNewProjectFields({ ...initialState });
         setCopyRight();
@@ -263,15 +297,18 @@ const ProjectContextProvider = ({ children }) => {
     };
 
     React.useEffect(() => {
-      if (isElectron()) {
-        loadSettings();
-        localforage.getItem('userProfile').then((value) => {
-          setUsername(value?.username);
-        });
-          localforage.getItem('currentProject').then((projectName) => {
-            setSelectedProject(projectName);
+      (async () => {
+        if (isElectron()) {
+          await loadSettings();
+          localforage.getItem('userProfile').then((value) => {
+            setUsername(value?.username);
           });
-      }
+            localforage.getItem('currentProject').then((projectName) => {
+              setSelectedProject(projectName);
+            });
+        }
+      })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

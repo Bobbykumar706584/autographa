@@ -11,6 +11,7 @@ import PopoverProjectType from '@/layouts/editor/PopoverProjectType';
 import { SnackBar } from '@/components/SnackBar';
 import useValidator from '@/components/hooks/useValidator';
 import ConfirmationModal from '@/layouts/editor/ConfirmationModal';
+import CustomMultiComboBox from '@/components/Resources/ResourceUtils/CustomMultiComboBox';
 import LayoutIcon from '@/icons/basil/Outline/Interface/Layout.svg';
 import BullhornIcon from '@/icons/basil/Outline/Communication/Bullhorn.svg';
 // import ProcessorIcon from '@/icons/basil/Outline/Devices/Processor.svg';
@@ -139,7 +140,7 @@ export default function NewProject({ call, project, closeEdit }) {
   };
 
   const setValue = async (value) => {
-    if (value.title) {
+    if (value.title && value.langCode) {
       setLanguage(value);
       languages.forEach((l) => {
         if (l.title !== value.title) {
@@ -237,7 +238,8 @@ export default function NewProject({ call, project, closeEdit }) {
       abbreviation: project.identification.abbreviation.en,
       description: project.project[project.type.flavorType.flavor.name].description,
     });
-    setValue({ title: project.languages[0].name.en, scriptDirection: project.project[project.type.flavorType.flavor.name].scriptDirection });
+    console.log(project, 'project');
+    setValue({ title: project.languages[0].name.en, scriptDirection: project.project[project.type.flavorType.flavor.name].scriptDirection, langCode: project.project[project.type.flavorType.flavor.name].langCode });
     setMetadata(project);
     // set dropdown to the project type
     switch (project.type.flavorType.flavor.name) {
@@ -339,7 +341,7 @@ export default function NewProject({ call, project, closeEdit }) {
                       && (
                       <div className="absolute">
                         <TargetLanguageTag>
-                          {language.scriptDirection ? language.scriptDirection : 'LTR'}
+                          {language?.ld ? language?.ld : 'LTR'}
                         </TargetLanguageTag>
                       </div>
                     )}
@@ -347,13 +349,15 @@ export default function NewProject({ call, project, closeEdit }) {
                       {t('label-target-language')}
                       <span className="text-error">*</span>
                     </h4>
-                    <CustomList
-                      selected={language}
-                      setSelected={setLanguage}
-                      // options={languages}
-                      options={languages.filter((v, i, a) => a.findIndex((v2) => ['title', 'scriptDirection'].every((k) => v2[k] === v[k])) === i)}
-                      show
+                    {languages.length > 0 && (
+                    <CustomMultiComboBox
+                      customData={languages}
+                      selectedList={[language]}
+                      setSelectedList={setLanguage}
+                      filterParams="ang"
+                      multiSelect={false}
                     />
+)}
                   </div>
                   <div className="mt-5">
                     <TargetLanguagePopover projectType={headerDropDown} />

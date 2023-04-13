@@ -16,6 +16,7 @@ export const createObsContent = (
   username,
   project,
   direction,
+  langCode,
   id,
   currentBurrito,
   importedFiles,
@@ -181,6 +182,7 @@ export const createObsContent = (
       project: {
         textStories: {
           scriptDirection: direction,
+          langCode,
           starred: call === 'edit' ? currentBurrito.project.textStories.starred : false,
           isArchived: call === 'edit' ? currentBurrito.project.textStories.isArchived : false,
           description: project.description,
